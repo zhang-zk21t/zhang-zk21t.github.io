@@ -40,7 +40,7 @@ CSS code可以由两个对偶 (dual) 的classical error correction code来组成
 
 下面考虑几种常用门在CSS code上的表现. 不详细证明.
 
-**Prop. ** 对所有的CSS code, CNOT都是transversal的.
+**Prop.** 对所有的CSS code, CNOT都是transversal的.
 
 **Prop.** 若CSS code的$X$部分和$Z$部分是**对偶**的, 则Hadamard是transversal的.
 
