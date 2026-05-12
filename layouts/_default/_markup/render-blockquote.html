@@ -1,0 +1,44 @@
+{{- /*
+  Renders GitHub-style alerts: > [!NOTE], [!TIP], [!IMPORTANT], [!WARNING], [!CAUTION].
+  Works whether the marker line is followed directly by content or separated by a blank > line.
+  Falls back to a plain blockquote for non-alert quotes.
+*/ -}}
+
+{{- $alertType := "" -}}
+{{- $body := .Text -}}
+
+{{- /* Case 1: Hugo's parser already detected the alert. */ -}}
+{{- if eq .Type "alert" -}}
+  {{- $alertType = lower .AlertType -}}
+{{- else -}}
+  {{- /* Case 2: blank-line variant — first child paragraph is just [!TYPE]. */ -}}
+  {{- $re := `^<p>\s*\[!(NOTE|TIP|IMPORTANT|WARNING|CAUTION)\]\s*</p>\s*` -}}
+  {{- with findRESubmatch $re .Text 1 -}}
+    {{- $alertType = lower (index (index . 0) 1) -}}
+    {{- $body = replaceRE $re "" $.Text -}}
+  {{- end -}}
+{{- end -}}
+
+{{- if $alertType -}}
+  {{- $palette := dict
+    "note"      "#0969da"
+    "tip"       "#1a7f37"
+    "important" "#8250df"
+    "warning"   "#9a6700"
+    "caution"   "#d1242f"
+  -}}
+  {{- $label := dict
+    "note"      "Note"
+    "tip"       "Tip"
+    "important" "Important"
+    "warning"   "Warning"
+    "caution"   "Caution"
+  -}}
+  {{- $c := index $palette $alertType -}}
+  <blockquote class="md-alert md-alert-{{ $alertType }}" style="border-left:4px solid {{ $c }};padding:0.6em 1em;margin:1em 0;background:rgba(127,127,127,0.08);border-radius:4px;">
+    <p style="margin:0 0 0.4em 0;color:{{ $c }};font-weight:600;font-size:0.9em;letter-spacing:0.02em;">{{ index $label $alertType }}</p>
+    {{ $body | safeHTML }}
+  </blockquote>
+{{- else -}}
+  <blockquote>{{ .Text | safeHTML }}</blockquote>
+{{- end -}}
