@@ -161,7 +161,8 @@ $$
 
 ## HP Code
 
-HP = HGP = Hypergraph Product Code.
+> HP = HGP = Hypergraph Product Code.
+>
 
 > 或许有帮助: [UC Berkeley关于Product Code的讲义](https://people.eecs.berkeley.edu/~jswright/quantumcodingtheory24/scribe%20notes/lecture15.pdf)
 >
@@ -249,7 +250,8 @@ HP code是第一个从这些角度克服BPT bound的code, 其本身也可以视�
 
 ## GB Code
 
-GB = Generalized Bicycle
+> GB = Generalized Bicycle
+>
 
 直接介绍构造. 仍然考虑两个码, 但是不再直接作两个码的张量积, 而是将其校验矩阵拼接:
 $$
@@ -299,7 +301,8 @@ $$
 
 ## BB Code
 
-BB = Bivariate Bicycle = 双元自行车码
+> BB = Bivariate Bicycle = 双元自行车码
+>
 
 BB code使用了两个循环变量, 将一元环替换为
 $$
@@ -324,6 +327,32 @@ $H_X H_Z^{\top} \equiv 0 \pmod 2$ 同上, 易证.
 > [!NOTE]
 > 
 > 对于stabilizer code, 其自然有$n = k - \text{rank}(H)$. 由于CSS code由两部分拼成, 则推知其有$n = k - \text{rank}({H_X}) - \text{rank}(H_Z)$. 且不论复杂度, $\text{rank}$至少有高斯消元法支持求出.
+
+**$\mathbb{Z}_{\ell} \times \mathbb{Z}_{m}$ 在什么情况下同构于 $\mathbb{Z}_{\ell \cdot m}$**?
+
+当且仅当$\gcd(\ell, m) = 1$. 这是中国剩余定理!
+
+> [!NOTE]
+>
+> 借这个机会, 理解一下中国剩余定理 (Chinese Remainder Theorem, CRT). 其往往在环论背景下考察. 设 $N = n_1 \cdots n_k$, 其中 $n_1 \cdots n_k \in \mathbb{Z}_{\geq 1}$ 两两互素, 则有环同构:
+> $$
+> \mathbb{Z}_{N} \cong \mathbb{Z}_{n_1} \times \mathbb{Z}_{n_2} \times \dots \times \mathbb{Z}_{n_k}
+> $$
+> 此处的$\mathbb{Z}_{n_i}$亦可记为$\mathbb{Z} / n_i \mathbb{Z}$.  $\mathbb{Z}_N$同理.
+>
+> 推广到主理想环上.设 $R$ 为主理想环，$a_1, \dots, a_n \in R \setminus \{0\}$ 两两互素，$a := a_1 \cdots a_n$，则有环同构:
+> $$
+> \varphi : R/(a) \longrightarrow \prod_{i=1}^n R/(a_i)
+> $$
+>
+> $$
+> r + (a) \longmapsto (r + (a_i))_{i=1}^n.
+> $$
+>
+> 不作证明. 证明可见李文威代数学讲义. 若从算法角度切入, 则先证明$n = 2$情形, 之后递归即可.
+>
+> 环论上成立, 那么把环里面的加法群拿出来, 自然也是成立的. 对于本文对code的阐述, 诸如$Z_{\ell}$的循环是加法群.  
+
 
 ### IBM: Gross Code
 
@@ -358,6 +387,105 @@ BB code中, 张量积用于构建"二维环面".
 *BB code*. 直觉简单: 环面上的点是$\mathbb{Z}_\ell\times\mathbb{Z}_m$.
 
 考虑$x = S_\ell\otimes I_m$，$y = I_\ell\otimes S_m, A = 1 + x, B = 1 + y$. 那么, 这个是local的.
+
+## 2BGA Code
+
+> 2BGA = Two-Block Group Algebra
+
+***说文.*** Two-Block结构在GB code、BB code中已经见到, 此处沿用. 而Group Algebra, 即群代数, 是新工具, 对其作介绍.
+
+***群代数.*** 令$G$为群, $R$为环. 此时$R[G]$是如下元素的集合:
+$$
+a = \sum_{g \in G} r_g\, g, \qquad r_g \in R.
+$$
+将$R[G]$称为**群环**. 若$R$交换, 则称$R[G]$为**群代数**.
+
+加法、乘法是自然的, 如你所想. 乘法满足$\big(\sum a_g g\big)\big(\sum b_h h\big) = \sum_{g,h} a_g b_h\,(gh)$, 双线性.
+
+可证$R[G]$是环.
+
+重要观察: $R$交换推不出$R[G]$交换. 群代数$R[G]$可交换 $\iff$ $G$可交换.
+
+如果您不喜欢环论, 也不用担心, 因为实际上, 构造code常常用的是简单而具体的数学对象, 大多数读者对此是熟悉的.
+
+***群代数观点看BB/GB Code.*** 取$R = \mathbb{F}_2$. 
+
+- $G = \mathbb{Z}_{\ell}$ ：$\mathbb{F}_2[\mathbb{Z}_{\ell}] \cong \mathbb{F}_2[x]/(x^{\ell} - 1)$ —— GB Code
+- $G = \mathbb{Z}_{\ell} \times \mathbb{Z}_{m}$：$\cong \mathbb{F}_2[x, y]/(x^{\ell}-1,\, y^{m}-1)$ —— BB code
+- $G = \cdots$
+
+***动机.*** 如果$G$选取其他群?  
+
+<u>*如果是Abel群?*</u>
+
+对于有限Abel群, 其总是可以分解为若干个循环群的直积. 则其对应了$k$元的多项式环, 也即$k$元的自行车码. 对于$G = \mathbb{Z}_{n_1} \times \dots \times \mathbb{Z}_{n_k}$, 其对应$\mathbb{F}_2[x_1, \dots, x_k] / (x_1^{n_1}-1, \dots, x_k^{n_k}-1)$. 这可以是一个延伸方向,但不是2BGA所重点选取的.
+
+> 个人认为, 由于中国剩余定理, 不管用几个变元, 其总是多多少少有同构, 实质上没有特别不同. (真的吗?)
+>
+> 那么选取多个变元, 可能更多的是在硬件特性, 比如"几何排布"上, 有不同的考量.
+
+<u>*如果不是Abel群?*</u>
+
+比如稍稍延伸一些, 到简单的非交换群, 如二面体群、四元数群?
+
+那么$\mathbb{F}_2[G]$也是非交换的, 2BGA即于此开始探究.
+
+***正则表示.*** 现在, 从抽象的代数结构中回过神来. 为了落到实际的硬件上, 我们需要校验矩阵. 自然地, 我们需要将抽象元素用矩阵**表示**出来. 
+
+设群$G = \{g_1,\dots, g_n\}$. 向量空间 $V$ 的基为 $\{e_{g_1}, e_{g_2}, \dots, e_{g_n}\}$, $\dim V = n$.
+
+$\forall a \in G$, 其**左正则表示**定义为一个线性映射, 规则为
+$$
+L(a) e_{g_i} = e_{a g_i}
+$$
+$L(a)$ 是一个 $n \times n$ 的方阵.
+
+如果 $a \cdot g_i = g_k$, 那么这个矩阵第 $i$ 列的第 $k$ 个位置就是 1, 其余位置都是 0. 以此法, $L(a)$ 的矩阵表示即被构造出.
+
+同理可以定义**右正则表示**: 
+$$
+e_{g_i} R(a) = e_{g_i a}.
+$$
+
+> 个人理解: 可以认为此处的$\{e_{g_1}, e_{g_2}, \dots, e_{g_n}\}$同构于$\{e_{1}, e_{2}, \dots, e_{n}\}$. 取群元$g_i$的编号$i$即可. 也可以说, 这个矩阵$L(a)$、$R(a)$ 选的基底就是$\{e_{g_1}, e_{g_2}, \dots, e_{g_n}\}$. 
+
+<u>*重要观察:*</u> 在正则表示中, 群里的**每一个元素**都被映射成了**一个$n \times n$的置换矩阵**.
+
+<u>*复习*:</u> GB code中, 群$\mathbb{Z}_{\ell}$中的元素$i$被映射到了$x^i = S^i$. BB code中, 群$\mathbb{Z}_{\ell} \times \mathbb{Z}_m$中的元素$(i, j)$被映射到了$x^i y^j = S_{\ell}^i \otimes S_{m}^j$.
+
+最后, $H_X H_Z^{\top} \equiv 0$条件中有矩阵的转置操作. 由置换矩阵的逆等于其转置，若矩阵$A$对应$a = \sum a_g g$, 则$A^{\top}$对应$\bar{a} = \sum a_g g^{-1}$. 
+
+***从正则表示到CSS条件.*** 我们仍然希望满足$H_X H_Z^{\top} \equiv 0$条件. 沿用双块构造：
+$$
+H_X = [\,A \mid B\,], \qquad H_Z = [\,B^{\top} \mid A^{\top}\,].
+$$
+则需要仍满足$AB = BA$.
+
+此处利用: 左、右正则表示有**交换性**! 考虑 $\forall a, b \in \mathbb{F}_2[G], \forall v \in V$,
+$$
+L(a)R(b)v = a(vb) = (av)b = R(b)L(a)v,
+$$
+也即
+$$
+\boxed{\,L(a)\, R(b) \;=\; R(b)\, L(a)\,}
+$$
+正则表示的**交换性**由线性映射的**结合律**直接导出。
+
+> Ref: Lin, Hsiang-Ku, and Leonid P. Pryadko. “Quantum Two-Block Group Algebra Codes.” arXiv:2306.16400. Preprint, arXiv, June 28, 2023. https://doi.org/10.48550/arXiv.2306.16400. 
+>
+> 以上介绍遵循这篇原始文献. 不过, 我认为, 也有一种"比较平凡"的满足CSS条件的方式, 比如直接取$a, b \in \mathbb{F}_2[G]$, $ab = ba$. 这样像是在利用"非交换群"中的"局部交换性". 效果如何? 我没有去进一步考证, 之后去看看. 
+
+***构造.*** 对于有限群$G$, $|G| = \ell$, **任取**$a, b \in \mathbb{F}_2[G]$, 令$A = L(a), B = R(b)$, 则$\text{2BGA}(a,b)$如下构造:
+$$
+H_X = [\,A \mid B\,] = [\,L(a) \mid R(b)\,], \qquad H_Z = [\,B^{\top} \mid A^{\top}\,] = [\,R(\bar b) \mid L(\bar a)\,],
+$$
+**注意: $a, b$不需要对易.**
+
+$H_X H_Z^{\top} \equiv 0$易证.
+
+***参数.*** $n = 2 \ell$. $k, d$ 无直接表达式, 仍然通过通用方法求解. (未深入研究, 需要进一步确认).
+
+***LDPC性质.*** 考察$H_X$, 其行、列的weight即为 ($a$的项数 + $b$的项数). $H_Z$同理. 保持$a, b$ sparse即可.
 
 ## Thoughts
 
